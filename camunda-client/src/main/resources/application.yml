@@ -1,0 +1,44 @@
+server:
+  port: 8088
+  error:
+    whitelabel:
+      enabled: false
+  servlet:
+    context-path: /microloan-service
+spring:
+  main:
+    allow-bean-definition-overriding: true
+    mvc:
+      throwExceptionIfNoHandlerFound: true
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://database-service:5432/camunda_client
+    username: admin
+    password: '~!QAZxsw2'
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 50
+      connection-timeout: 30000
+      pool-name: CAMUNDA_TASK_POOL
+  jpa:
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        hbm2ddl:
+          auto: update
+camunda.bpm:
+  generic-properties:
+    properties:
+      java-serialization-format-enabled: true
+  client:
+    base-url: ${CAMUNDA_BASE_URL}
+    worker-id: microloan-worker
+    max-tasks: 1
+    basic-auth:
+      username: ${AUTH_USERNAME}
+      password: ${AUTH_PASSWORD}
+    async-response-timeout: 1000
+    disable-backoff-strategy: false
+    backoff-strategy-time: 2000

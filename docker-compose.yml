@@ -1,0 +1,78 @@
+version: '3.3'
+services:
+  camunda-server:
+    build: camunda-server
+    depends_on:
+      - database-service
+    ports:
+      - 8088:8080
+    command: [ "java", "-jar", "app.jar" ]
+    networks:
+      - backend
+  worker-service-1:
+    build: camunda-client
+    depends_on:
+      - database-service
+      - camunda-server
+    environment:
+      - AUTH_USERNAME=admin
+      - AUTH_PASSWORD=~!QAZxsw2
+      - CAMUNDA_BASE_URL=http://camunda-server:8080/engine-rest
+    ports:
+      - 8081:8088
+    command: [ "java", "-jar", "app.jar" ]
+    networks:
+      - backend
+
+  worker-service-2:
+    build: camunda-client
+    depends_on:
+      - database-service
+      - camunda-server
+    environment:
+      - AUTH_USERNAME=admin
+      - AUTH_PASSWORD=~!QAZxsw2
+      - CAMUNDA_BASE_URL=http://camunda-server:8080/engine-rest
+    ports:
+      - 8082:8088
+    command: [ "java", "-jar", "app.jar" ]
+    networks:
+      - backend
+
+  worker-service-3:
+    build: camunda-client
+    depends_on:
+      - database-service
+      - camunda-server
+    environment:
+      - AUTH_USERNAME=admin
+      - AUTH_PASSWORD=~!QAZxsw2
+      - CAMUNDA_BASE_URL=http://camunda-server:8080/engine-rest
+    ports:
+      - 8083:8088
+    command: [ "java", "-jar", "app.jar" ]
+    networks:
+      - backend
+
+  database-service:
+    build: database
+    restart: unless-stopped
+    command: "postgres -c 'max_connections=300' -c 'shared_buffers=80MB'"
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=~!QAZxsw2
+      - POSTGRES_DB=camunda_server
+      - POSTGRES_HOST=database-service
+    volumes:
+      - database-data:/var/lib/postgresql/data/ # persist data even if container shuts downvolumes:
+    networks:
+      - backend
+
+networks:
+  backend:
+
+volumes:
+  database-data:
+    driver: local

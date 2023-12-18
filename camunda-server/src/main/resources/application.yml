@@ -1,0 +1,38 @@
+server:
+  error:
+    whitelabel:
+      enabled: false
+  port: 8080
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  mvc:
+    throwExceptionIfNoHandlerFound: true
+  security:
+    user:
+      name: admin
+      password: '~!QAZxsw2'
+  datasource:
+    url: jdbc:postgresql://database-service:5432/camunda_server
+    username: admin
+    password: '~!QAZxsw2'
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 100
+      connection-timeout: 30000
+      pool-name: CAMUNDA_POOL
+  application:
+    name: camunda-service
+camunda.bpm:
+  authorization:
+    enabled: true
+  admin-user:
+    id: admin
+    password: ~!QAZxsw2
+  job-execution:
+    enabled: true
+    core-pool-size: 10
+    max-pool-size: 20
+    queue-capacity: 10
+    max-jobs-per-acquisition: 10
+

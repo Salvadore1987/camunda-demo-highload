@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0uq3mt7" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.9.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.18.0">
+  <bpmn:process id="credit-demo" name="Credit Demo" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0e6ywc6</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0e6ywc6" sourceRef="StartEvent_1" targetRef="check-client" />
+    <bpmn:serviceTask id="check-client" name="Check Client" camunda:asyncBefore="true" camunda:exclusive="false" camunda:type="external" camunda:topic="check-client">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="state">CHECK_CLIENT</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0e6ywc6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1tfqrmp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1tfqrmp" sourceRef="check-client" targetRef="update-client" />
+    <bpmn:serviceTask id="update-client" name="Update Client" camunda:asyncBefore="true" camunda:exclusive="false" camunda:type="external" camunda:topic="update-client">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="state">UPDATE_CLIENT</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1tfqrmp</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cycppw</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0cycppw" sourceRef="update-client" targetRef="check-salary" />
+    <bpmn:serviceTask id="check-salary" name="Check Salary" camunda:asyncBefore="true" camunda:exclusive="false" camunda:type="external" camunda:topic="check-salary">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="state">CHECK_SALARY</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0cycppw</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bdy8xy</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0bdy8xy" sourceRef="check-salary" targetRef="check-overdue" />
+    <bpmn:serviceTask id="check-overdue" name="Check Overdue" camunda:asyncBefore="true" camunda:exclusive="false" camunda:type="external" camunda:topic="check-overdue">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="state">CHECK_OVERDUE</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0bdy8xy</bpmn:incoming>
+      <bpmn:outgoing>Flow_05cgega</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_05cgega" sourceRef="check-overdue" targetRef="check-filial" />
+    <bpmn:serviceTask id="check-filial" name="Check Filial" camunda:asyncBefore="true" camunda:exclusive="false" camunda:type="external" camunda:topic="check-filial">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="state">CHECK_FILIAL</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_05cgega</bpmn:incoming>
+      <bpmn:outgoing>Flow_036rf6u</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_036rf6u" sourceRef="check-filial" targetRef="Activity_1qdgafv" />
+    <bpmn:userTask id="Activity_1qdgafv" name="Approve" camunda:asyncAfter="true">
+      <bpmn:incoming>Flow_036rf6u</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qtfsxl</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_1fml6za">
+      <bpmn:incoming>Flow_1qtfsxl</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1qtfsxl" sourceRef="Activity_1qdgafv" targetRef="Event_1fml6za" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="credit-demo">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17tkzyr_di" bpmnElement="check-client">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_151j08l_di" bpmnElement="update-client">
+        <dc:Bounds x="430" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1oonmm3_di" bpmnElement="check-salary">
+        <dc:Bounds x="590" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ngu1wm_di" bpmnElement="check-overdue">
+        <dc:Bounds x="750" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1f4euur_di" bpmnElement="check-filial">
+        <dc:Bounds x="910" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_12ccoya_di" bpmnElement="Activity_1qdgafv">
+        <dc:Bounds x="1070" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1fml6za_di" bpmnElement="Event_1fml6za">
+        <dc:Bounds x="1232" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0e6ywc6_di" bpmnElement="Flow_0e6ywc6">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1tfqrmp_di" bpmnElement="Flow_1tfqrmp">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="430" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cycppw_di" bpmnElement="Flow_0cycppw">
+        <di:waypoint x="530" y="117" />
+        <di:waypoint x="590" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bdy8xy_di" bpmnElement="Flow_0bdy8xy">
+        <di:waypoint x="690" y="117" />
+        <di:waypoint x="750" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05cgega_di" bpmnElement="Flow_05cgega">
+        <di:waypoint x="850" y="117" />
+        <di:waypoint x="910" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_036rf6u_di" bpmnElement="Flow_036rf6u">
+        <di:waypoint x="1010" y="117" />
+        <di:waypoint x="1070" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qtfsxl_di" bpmnElement="Flow_1qtfsxl">
+        <di:waypoint x="1170" y="117" />
+        <di:waypoint x="1232" y="117" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
