@@ -39,6 +39,7 @@ public class CustomerServiceImpl implements CustomerService {
         entity.getCustomer().setFirstName(info.getFirstName());
         entity.getCustomer().setLastName(info.getLastName());
         entity.getCustomer().setBirthDate(LocalDate.of(1987, Month.DECEMBER, 7));
+        entity.getCustomer().setCardNumber(info.getCardNumber());
       }, ApplicationFindException::new);
   }
 

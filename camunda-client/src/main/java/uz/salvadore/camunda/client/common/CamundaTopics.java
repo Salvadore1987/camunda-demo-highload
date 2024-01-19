@@ -11,5 +11,9 @@ public class CamundaTopics {
   public static final String CHECK_SALARY = "check-salary";
   public static final String CHECK_OVERDUE = "check-overdue";
   public static final String CHECK_FILIAL = "check-filial";
+  public static final String WRITE_OFF = "write-off";
+  public static final String CREDIT_AMOUNT = "credit-amount";
+  public static final String RETURN_PAYMENT = "return-payment";
+  public static final String ERROR_HANDLER = "error-handler";
 
 }

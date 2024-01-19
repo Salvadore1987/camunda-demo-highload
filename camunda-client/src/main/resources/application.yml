@@ -39,6 +39,6 @@ camunda.bpm:
     basic-auth:
       username: ${AUTH_USERNAME}
       password: ${AUTH_PASSWORD}
-    async-response-timeout: 1000
+    async-response-timeout: 60000
     disable-backoff-strategy: false
     backoff-strategy-time: 2000

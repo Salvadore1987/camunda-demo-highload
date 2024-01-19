@@ -50,7 +50,7 @@ public class UpdateClientHandler implements ExternalTaskHandler {
       applicationService.updateState(appId, State.CLIENT_UPDATED);
       externalTaskService.complete(externalTask, Map.of(Constants.TASK_STATE, State.CLIENT_UPDATED));
     } catch (Exception ex) {
-      log.error(ExceptionUtils.getMessage(ex));
+      log.error("UpdateClientHandler: {}", ExceptionUtils.getMessage(ex));
       if (ex instanceof DomainException) {
         final Map<String, Object> variables = CamundaErrorUtil.buildBpmnError(
           ex.getMessage(),

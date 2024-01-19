@@ -50,7 +50,7 @@ public class CheckOverdueHandler implements ExternalTaskHandler {
       applicationService.updateState(appId, State.OVERDUE_CHECKED);
       externalTaskService.complete(externalTask, Map.of(Constants.TASK_STATE, State.OVERDUE_CHECKED));
     } catch (Exception ex) {
-      log.error(ExceptionUtils.getMessage(ex));
+      log.error("CheckOverdueHandler: {}", ExceptionUtils.getMessage(ex));
       if (ex instanceof DomainException) {
         final Map<String, Object> variables = CamundaErrorUtil.buildBpmnError(
           ex.getMessage(),

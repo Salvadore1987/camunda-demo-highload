@@ -16,10 +16,11 @@ import uz.salvadore.camunda.client.common.State;
 import uz.salvadore.camunda.client.exception.DomainException;
 import uz.salvadore.camunda.client.exception.ProcessVariableNotFound;
 import uz.salvadore.camunda.client.service.ApplicationService;
-import uz.salvadore.camunda.client.service.CustomerService;
+import uz.salvadore.camunda.client.service.PaymentService;
 import uz.salvadore.camunda.client.utils.CamundaErrorUtil;
 import uz.salvadore.camunda.client.utils.CamundaUtils;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import static uz.salvadore.camunda.client.common.Constants.PROCESS_KEY;
@@ -28,33 +29,32 @@ import static uz.salvadore.camunda.client.common.Constants.PROCESS_KEY;
 @Component
 @RequiredArgsConstructor
 @ExternalTaskSubscription(
-  topicName = CamundaTopics.CHECK_SALARY,
+  topicName = CamundaTopics.RETURN_PAYMENT,
   lockDuration = 60000,
   variableNames = {"appId", "state"},
   processDefinitionKey = PROCESS_KEY,
   includeExtensionProperties = true
 )
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class CheckSalaryHandler implements ExternalTaskHandler {
+public class ReturnPaymentHandler implements ExternalTaskHandler {
 
-  ApplicationService applicationService;
-  CustomerService customerService;
-
+  ApplicationService service;
+  PaymentService paymentService;
   @Override
   public void execute(ExternalTask externalTask, ExternalTaskService externalTaskService) {
     try {
       externalTask.getAllVariables().forEach((key, value) -> log.info("Key: {}, Value: {}", key, value));
       Long appId = (Long) CamundaUtils.getVariableByNameOrElseThrow(externalTask, Constants.APP_ID, ProcessVariableNotFound::new);
       log.info("Application id: {}", appId);
-      customerService.checkSalary(appId);
-      applicationService.updateState(appId, State.SALARY_CHECKED);
-      externalTaskService.complete(externalTask, Map.of(Constants.TASK_STATE, State.SALARY_CHECKED));
+      paymentService.returnFounds(appId, "PAYME", new BigDecimal("100.00"));
+      service.updateState(appId, State.RETURN_PAYMENT);
+      externalTaskService.complete(externalTask, Map.of(Constants.TASK_STATE, State.RETURN_PAYMENT));
     } catch (Exception ex) {
-      log.error("CheckSalaryHandler: {}", ExceptionUtils.getMessage(ex));
+      log.error("ReturnPaymentHandler: {}", ExceptionUtils.getMessage(ex));
       if (ex instanceof DomainException) {
         final Map<String, Object> variables = CamundaErrorUtil.buildBpmnError(
           ex.getMessage(),
-          State.CHECK_SALARY.getTitle());
+          State.RETURN_PAYMENT.getTitle());
         externalTaskService.handleBpmnError(externalTask, ex.getMessage(), ExceptionUtils.getStackTrace(ex), variables);
       }
       final Integer retries = externalTask.getRetries();

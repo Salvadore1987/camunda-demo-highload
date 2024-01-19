@@ -36,6 +36,7 @@ public class CustomerEntity extends AbstractEntity {
   String clientUid;
   String clientId;
   String clientCode;
+  String cardNumber;
 
   public boolean equals(Object o) {
     if (this == o) return true;

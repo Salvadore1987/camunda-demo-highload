@@ -31,8 +31,8 @@ camunda.bpm:
     password: ~!QAZxsw2
   job-execution:
     enabled: true
-    core-pool-size: 10
-    max-pool-size: 20
-    queue-capacity: 10
+    core-pool-size: 9
+    max-pool-size: 18
+    queue-capacity: 18
     max-jobs-per-acquisition: 10
 

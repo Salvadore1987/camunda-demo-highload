@@ -14,6 +14,9 @@ public enum State {
   OVERDUE_CHECKED("Проверка на просрочки прошла успешно"),
   CHECK_FILIAL("Проверка филиала"),
   FILIAL_CHECKED("Проверка филиала прошла успешно"),
+  WRITE_OFF("Списание средств с карты"),
+  CREDIT_AMOUNT("Зачисление средств поставщику"),
+  RETURN_PAYMENT("Возврат средств на карту"),
   EXPIRED("Истекла"),
   FINISHED("Завершена"),
   ERROR("Ошибка");

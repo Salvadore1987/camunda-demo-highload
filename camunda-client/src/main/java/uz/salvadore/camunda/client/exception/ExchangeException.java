@@ -1,6 +1,6 @@
 package uz.salvadore.camunda.client.exception;
 
-public class ExchangeException extends DomainException {
+public class ExchangeException extends RuntimeException {
   public ExchangeException() {
   }
 

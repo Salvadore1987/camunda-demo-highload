@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import uz.salvadore.camunda.client.dto.CustomerInfo;
 import uz.salvadore.camunda.client.dto.FilialInfo;
 import uz.salvadore.camunda.client.dto.OverdueInfo;
+import uz.salvadore.camunda.client.dto.PaymentResponse;
 import uz.salvadore.camunda.client.dto.SalaryInfo;
 import uz.salvadore.camunda.client.exception.ExchangeException;
 
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Collections;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -84,6 +86,52 @@ public class ExchangeServiceImpl implements ExchangeService {
       return FilialInfo.builder()
         .codeFilial("00450")
         .nameFilial("NBU Main Branch")
+        .build();
+    } catch (InterruptedException ex) {
+      log.error(ex.getMessage());
+      throw new ExchangeException(ex.getMessage());
+    }
+  }
+
+  @Override
+  public PaymentResponse writeOff(String cardNumber, BigDecimal amount) {
+    try {
+      Thread.sleep(30000L);
+      return PaymentResponse.builder()
+        .code(0)
+        .message("Success")
+        .build();
+    } catch (InterruptedException ex) {
+      log.error(ex.getMessage());
+      throw new ExchangeException(ex.getMessage());
+    }
+  }
+
+  @Override
+  public PaymentResponse creditAmountToProvider(String provider, BigDecimal amount) {
+    try {
+      Thread.sleep(30000L);
+      final Random random = new Random();
+      final int randomNumber = random.nextInt(10 - 1 + 1) + 1;
+      int resultCode = (randomNumber % 2 == 0) ? 0 : 999;
+      log.info("RESULT CODE: {}", resultCode);
+      return PaymentResponse.builder()
+        .code(resultCode)
+        .message((resultCode != 0 ? "ERROR" : "SUCCESS"))
+        .build();
+    } catch (InterruptedException ex) {
+      log.error(ex.getMessage());
+      throw new ExchangeException(ex.getMessage());
+    }
+  }
+
+  @Override
+  public PaymentResponse returnFounds(String provider, BigDecimal amount) {
+    try {
+      Thread.sleep(30000L);
+      return PaymentResponse.builder()
+        .code(0)
+        .message("Success")
         .build();
     } catch (InterruptedException ex) {
       log.error(ex.getMessage());

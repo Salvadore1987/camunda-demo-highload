@@ -50,7 +50,7 @@ public class CheckFilialHandler implements ExternalTaskHandler {
       applicationService.updateState(appId, State.FILIAL_CHECKED);
       externalTaskService.complete(externalTask, Map.of(Constants.TASK_STATE, State.FILIAL_CHECKED));
     } catch (Exception ex) {
-      log.error(ExceptionUtils.getMessage(ex));
+      log.error("CheckFilialHandler: {}", ExceptionUtils.getMessage(ex));
       if (ex instanceof DomainException) {
         final Map<String, Object> variables = CamundaErrorUtil.buildBpmnError(
           ex.getMessage(),

@@ -5,7 +5,7 @@
       <bpmn:outgoing>Flow_0e6ywc6</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_0e6ywc6" sourceRef="StartEvent_1" targetRef="check-client" />
-    <bpmn:serviceTask id="check-client" name="Check Client" camunda:asyncBefore="true" camunda:exclusive="false" camunda:type="external" camunda:topic="check-client">
+    <bpmn:serviceTask id="check-client" name="Проверка клиента" camunda:asyncBefore="true" camunda:type="external" camunda:topic="check-client">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="state">CHECK_CLIENT</camunda:inputParameter>
@@ -15,7 +15,7 @@
       <bpmn:outgoing>Flow_1tfqrmp</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1tfqrmp" sourceRef="check-client" targetRef="update-client" />
-    <bpmn:serviceTask id="update-client" name="Update Client" camunda:asyncBefore="true" camunda:exclusive="false" camunda:type="external" camunda:topic="update-client">
+    <bpmn:serviceTask id="update-client" name="Обновление клиента" camunda:asyncBefore="true" camunda:type="external" camunda:topic="update-client">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="state">UPDATE_CLIENT</camunda:inputParameter>
@@ -25,7 +25,7 @@
       <bpmn:outgoing>Flow_0cycppw</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_0cycppw" sourceRef="update-client" targetRef="check-salary" />
-    <bpmn:serviceTask id="check-salary" name="Check Salary" camunda:asyncBefore="true" camunda:exclusive="false" camunda:type="external" camunda:topic="check-salary">
+    <bpmn:serviceTask id="check-salary" name="Проверка на ЗП продукт" camunda:asyncBefore="true" camunda:type="external" camunda:topic="check-salary">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="state">CHECK_SALARY</camunda:inputParameter>
@@ -35,7 +35,7 @@
       <bpmn:outgoing>Flow_0bdy8xy</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_0bdy8xy" sourceRef="check-salary" targetRef="check-overdue" />
-    <bpmn:serviceTask id="check-overdue" name="Check Overdue" camunda:asyncBefore="true" camunda:exclusive="false" camunda:type="external" camunda:topic="check-overdue">
+    <bpmn:serviceTask id="check-overdue" name="Проверка на просрочки" camunda:asyncBefore="true" camunda:type="external" camunda:topic="check-overdue">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="state">CHECK_OVERDUE</camunda:inputParameter>
@@ -45,24 +45,64 @@
       <bpmn:outgoing>Flow_05cgega</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_05cgega" sourceRef="check-overdue" targetRef="check-filial" />
-    <bpmn:serviceTask id="check-filial" name="Check Filial" camunda:asyncBefore="true" camunda:exclusive="false" camunda:type="external" camunda:topic="check-filial">
+    <bpmn:serviceTask id="check-filial" name="Проверка валидности филиала" camunda:asyncBefore="true" camunda:type="external" camunda:topic="check-filial">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="state">CHECK_FILIAL</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_05cgega</bpmn:incoming>
-      <bpmn:outgoing>Flow_036rf6u</bpmn:outgoing>
+      <bpmn:outgoing>Flow_19sgxz3</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_036rf6u" sourceRef="check-filial" targetRef="Activity_1qdgafv" />
-    <bpmn:userTask id="Activity_1qdgafv" name="Approve" camunda:asyncAfter="true">
-      <bpmn:incoming>Flow_036rf6u</bpmn:incoming>
+    <bpmn:userTask id="Activity_1qdgafv" name="Подтверждение заявки" camunda:asyncAfter="true">
+      <bpmn:incoming>Flow_0cpzwv5</bpmn:incoming>
       <bpmn:outgoing>Flow_1qtfsxl</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:endEvent id="Event_1fml6za">
       <bpmn:incoming>Flow_1qtfsxl</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1qtfsxl" sourceRef="Activity_1qdgafv" targetRef="Event_1fml6za" />
+    <bpmn:sequenceFlow id="Flow_19sgxz3" sourceRef="check-filial" targetRef="write-off" />
+    <bpmn:serviceTask id="write-off" name="Списание средств с карты" camunda:type="external" camunda:topic="write-off">
+      <bpmn:incoming>Flow_19sgxz3</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rk8543</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0rk8543" sourceRef="write-off" targetRef="credit-amount" />
+    <bpmn:serviceTask id="credit-amount" name="Зачисление средств поставщику" camunda:type="external" camunda:topic="credit-amount">
+      <bpmn:incoming>Flow_0rk8543</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cpzwv5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0cpzwv5" sourceRef="credit-amount" targetRef="Activity_1qdgafv" />
+    <bpmn:boundaryEvent id="Event_1bco9mu" attachedToRef="write-off">
+      <bpmn:compensateEventDefinition id="CompensateEventDefinition_0nn3cja" />
+    </bpmn:boundaryEvent>
+    <bpmn:serviceTask id="return-payment" name="Возврат средств на карту" isForCompensation="true" camunda:type="external" camunda:topic="return-payment" />
+    <bpmn:subProcess id="global-error-handler" name="Global Error Handler" triggeredByEvent="true">
+      <bpmn:intermediateThrowEvent id="Event_166yb57">
+        <bpmn:incoming>Flow_1eefbf6</bpmn:incoming>
+        <bpmn:outgoing>Flow_0f9nseb</bpmn:outgoing>
+        <bpmn:compensateEventDefinition id="CompensateEventDefinition_0urxhs9" />
+      </bpmn:intermediateThrowEvent>
+      <bpmn:sequenceFlow id="Flow_1eefbf6" sourceRef="start-error-event" targetRef="Event_166yb57" />
+      <bpmn:sequenceFlow id="Flow_0f9nseb" sourceRef="Event_166yb57" targetRef="error-handler" />
+      <bpmn:endEvent id="Event_1t2xeb3">
+        <bpmn:incoming>Flow_0qfff2l</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0qfff2l" sourceRef="error-handler" targetRef="Event_1t2xeb3" />
+      <bpmn:serviceTask id="error-handler" name="Обработка ошибок" camunda:type="external" camunda:topic="error-handler">
+        <bpmn:incoming>Flow_0f9nseb</bpmn:incoming>
+        <bpmn:outgoing>Flow_0qfff2l</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:startEvent id="start-error-event">
+        <bpmn:outgoing>Flow_1eefbf6</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_0m0a5kq" />
+      </bpmn:startEvent>
+      <bpmn:textAnnotation id="TextAnnotation_0qabj90">
+        <bpmn:text>Запустить компенсируюшие действия в случае ошибки</bpmn:text>
+      </bpmn:textAnnotation>
+      <bpmn:association id="Association_1pwnazh" sourceRef="Event_166yb57" targetRef="TextAnnotation_0qabj90" />
+    </bpmn:subProcess>
+    <bpmn:association id="Association_1ms2fer" associationDirection="One" sourceRef="Event_1bco9mu" targetRef="return-payment" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="credit-demo">
@@ -71,24 +111,87 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_17tkzyr_di" bpmnElement="check-client">
         <dc:Bounds x="270" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_151j08l_di" bpmnElement="update-client">
         <dc:Bounds x="430" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1oonmm3_di" bpmnElement="check-salary">
         <dc:Bounds x="590" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1ngu1wm_di" bpmnElement="check-overdue">
         <dc:Bounds x="750" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1f4euur_di" bpmnElement="check-filial">
         <dc:Bounds x="910" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1alue3v_di" bpmnElement="write-off">
+        <dc:Bounds x="1070" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1pdd8yk_di" bpmnElement="credit-amount">
+        <dc:Bounds x="1230" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_12ccoya_di" bpmnElement="Activity_1qdgafv">
-        <dc:Bounds x="1070" y="77" width="100" height="80" />
+        <dc:Bounds x="1390" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1fml6za_di" bpmnElement="Event_1fml6za">
-        <dc:Bounds x="1232" y="99" width="36" height="36" />
+        <dc:Bounds x="1552" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_087600y_di" bpmnElement="return-payment">
+        <dc:Bounds x="1210" y="200" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1ms2fer_di" bpmnElement="Association_1ms2fer">
+        <di:waypoint x="1140" y="175" />
+        <di:waypoint x="1140" y="240" />
+        <di:waypoint x="1210" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1m9ojj6_di" bpmnElement="global-error-handler" isExpanded="true">
+        <dc:Bounds x="465" y="340" width="475" height="270" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0qabj90_di" bpmnElement="TextAnnotation_0qabj90">
+        <dc:Bounds x="640" y="370" width="100" height="70" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_02d5jd4_di" bpmnElement="Event_166yb57">
+        <dc:Bounds x="592" y="482" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1t2xeb3_di" bpmnElement="Event_1t2xeb3">
+        <dc:Bounds x="872" y="482" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0pt10kv_di" bpmnElement="error-handler">
+        <dc:Bounds x="700" y="460" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0kblzqk_di" bpmnElement="start-error-event">
+        <dc:Bounds x="505" y="482" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1pwnazh_di" bpmnElement="Association_1pwnazh">
+        <di:waypoint x="620" y="485" />
+        <di:waypoint x="652" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1eefbf6_di" bpmnElement="Flow_1eefbf6">
+        <di:waypoint x="541" y="500" />
+        <di:waypoint x="592" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0f9nseb_di" bpmnElement="Flow_0f9nseb">
+        <di:waypoint x="628" y="500" />
+        <di:waypoint x="700" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qfff2l_di" bpmnElement="Flow_0qfff2l">
+        <di:waypoint x="800" y="500" />
+        <di:waypoint x="872" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0dqx0b3_di" bpmnElement="Event_1bco9mu">
+        <dc:Bounds x="1122" y="139" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0e6ywc6_di" bpmnElement="Flow_0e6ywc6">
         <di:waypoint x="215" y="117" />
@@ -110,13 +213,21 @@
         <di:waypoint x="850" y="117" />
         <di:waypoint x="910" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_036rf6u_di" bpmnElement="Flow_036rf6u">
+      <bpmndi:BPMNEdge id="Flow_19sgxz3_di" bpmnElement="Flow_19sgxz3">
         <di:waypoint x="1010" y="117" />
         <di:waypoint x="1070" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1qtfsxl_di" bpmnElement="Flow_1qtfsxl">
+      <bpmndi:BPMNEdge id="Flow_0rk8543_di" bpmnElement="Flow_0rk8543">
         <di:waypoint x="1170" y="117" />
-        <di:waypoint x="1232" y="117" />
+        <di:waypoint x="1230" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cpzwv5_di" bpmnElement="Flow_0cpzwv5">
+        <di:waypoint x="1330" y="117" />
+        <di:waypoint x="1390" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qtfsxl_di" bpmnElement="Flow_1qtfsxl">
+        <di:waypoint x="1490" y="117" />
+        <di:waypoint x="1552" y="117" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
