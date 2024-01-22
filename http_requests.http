@@ -1,0 +1,9 @@
+### Start Process
+POST http://localhost:8081/microloan-service/api/v1/loan/claim/start
+Content-Type: application/json
+
+{
+  "customer": {
+    "pinpp": "30712870220066"
+  }
+}
