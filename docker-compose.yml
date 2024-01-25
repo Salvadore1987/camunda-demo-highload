@@ -11,6 +11,7 @@ services:
       - backend
   worker-service-1:
     build: camunda-client
+    restart: always
     depends_on:
       - database-service
       - camunda-server
@@ -21,11 +22,17 @@ services:
     ports:
       - 8081:8088
     command: [ "java", "-jar", "app.jar" ]
+    healthcheck:
+      test: "curl --fail --silent localhost:8088/microloan-service/actuator/health/readiness | grep UP || exit 1"
+      interval: 15s
+      timeout: 10s
+      retries: 5
     networks:
       - backend
 
   worker-service-2:
     build: camunda-client
+    restart: always
     depends_on:
       - database-service
       - camunda-server
@@ -36,11 +43,17 @@ services:
     ports:
       - 8082:8088
     command: [ "java", "-jar", "app.jar" ]
+    healthcheck:
+      test: "curl --fail --silent localhost:8088/microloan-service/actuator/health/readiness | grep UP || exit 1"
+      interval: 15s
+      timeout: 10s
+      retries: 5
     networks:
       - backend
 
   worker-service-3:
     build: camunda-client
+    restart: always
     depends_on:
       - database-service
       - camunda-server
@@ -51,6 +64,11 @@ services:
     ports:
       - 8083:8088
     command: [ "java", "-jar", "app.jar" ]
+    healthcheck:
+      test: "curl --fail --silent localhost:8088/microloan-service/actuator/health/readiness | grep UP || exit 1"
+      interval: 15s
+      timeout: 10s
+      retries: 5
     networks:
       - backend
 
